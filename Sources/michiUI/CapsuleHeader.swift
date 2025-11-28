@@ -84,15 +84,19 @@ public struct CapsuleHeader: View {
 }
 
 #Preview {
-    CapsuleHeader(title: "基 本 ア ク シ ョ ン ", subtitle: "BASIC ACTION", description: "ア イ テ ム な し で O K の キ ャ ラ ク タ ー 固 有 の ア ク シ ョ ン")
-    
-    
-    CapsuleHeader(title: "Basic Actions", subtitle: "BASIC ACTION", description: "Character-specific actions that can be performed without any items.")
-    
-    
-    CapsuleHeader(subtitle: "BASIC ACTION", description: "Character-specific actions that can be performed without any items.")
-    
-    
-    CapsuleHeader(title: "Basic Actions", description: "Character-specific actions that can be performed without any items.")
+    CustomFont.register()
+    return VStack {
+        CapsuleHeader(title: "基 本 ア ク シ ョ ン ", subtitle: "BASIC ACTION", description: "ア イ テ ム な し で O K の キ ャ ラ ク タ ー 固 有 の ア ク シ ョ ン")
+        
+        
+        CapsuleHeader(title: "Basic Actions", subtitle: "BASIC ACTION", description: "Character-specific actions that can be performed without any items.")
+        
+        
+        CapsuleHeader(subtitle: "BASIC ACTION", description: "Character-specific actions that can be performed without any items.")
+        
+        
+        CapsuleHeader(title: "Basic Actions", description: "Character-specific actions that can be performed without any items.")
+    }
+   
     
 }
