@@ -39,12 +39,14 @@ public enum FontToken {
     case titleMedium
     case titleSmall
     case titleExtraLarge
+    case titleExtraSmall
     
     // Label fonts (Karu Font Family)
     case labelLarge
     case labelMedium
     case labelSmall
     case labelExtraLarge
+    case labelExtraSmall
     case body
     case caption
 }
@@ -53,6 +55,7 @@ public enum FontToken {
 
 /// Color token types matching asset catalog colors
 public enum ColorToken {
+    case black
     case blueAccent
     case blueishSurface
     case blueSecondary
@@ -101,19 +104,14 @@ public struct CustomFont {
             registerFont(at: fontURL, name: "Microgramma")
         }
         
-        // Register Karu fonts - try different paths and file name variations
+        // Register Karu fonts - only the actual files that exist
         // Note: Light font is "Karu Light.otf" (with space and .otf extension)
         let karuFonts = [
             ("karu-regular", "ttf"),
             ("karu-bold", "ttf"),
             ("karu-medium", "ttf"),
-            ("karu-light", "ttf"),
             ("Karu Light", "otf"),  // Light font has space and .otf extension
-            ("Karu-Regular", "ttf"),  // Try capitalized
-            ("Karu-Bold", "ttf"),
-            ("Karu-Medium", "ttf"),
-            ("Karu-Light", "ttf"),
-            ("Karu-Light", "otf")
+            ("karu-extralight", "ttf")
         ]
         
         for (fontName, ext) in karuFonts {
@@ -238,6 +236,8 @@ extension Font {
             return microgrammaFont(size: 22)
         case .titleSmall:
             return microgrammaFont(size: 18)
+        case .titleExtraSmall:
+            return microgrammaFont(size: 14)
         
         // Label fonts (Karu Font Family)
         case .labelExtraLarge:
@@ -248,10 +248,40 @@ extension Font {
             return karuFont(size: 16)
         case .labelSmall:
             return karuFont(size: 14)
+        case .labelExtraSmall:
+            return karuFont(size: 12)
         case .body:
             return karuFont(size: 16)
         case .caption:
             return karuFont(size: 12)
+        }
+    }
+    
+    /// Creates a light weight font from a token
+    /// Use this instead of .fontWeight(.light) for custom fonts
+    /// - Parameter token: The font token to use
+    /// - Returns: A configured Font with light weight
+    public static func tokenLight(_ token: FontToken) -> Font {
+        switch token {
+        // Title fonts don't have light variants, return regular
+        case .titleExtraLarge, .titleLarge, .titleMedium, .titleSmall, .titleExtraSmall:
+            return .token(token)
+        
+        // Label fonts (Karu Font Family) - use light weight
+        case .labelExtraLarge:
+            return karuFont(size: 20, weight: .light)
+        case .labelLarge:
+            return karuFont(size: 18, weight: .light)
+        case .labelMedium:
+            return karuFont(size: 16, weight: .light)
+        case .labelSmall:
+            return karuFont(size: 14, weight: .light)
+        case .labelExtraSmall:
+            return karuFont(size: 12, weight: .light)
+        case .body:
+            return karuFont(size: 16, weight: .light)
+        case .caption:
+            return karuFont(size: 12, weight: .light)
         }
     }
     
@@ -299,8 +329,23 @@ extension Font {
                     return Font(mediumFont)
                 }
             }
-        case .light, .ultraLight, .thin:
+        case .light:
             // Light weight
+            let lightNames = ["Karu-Light", "Karu Light", "karu-light"]
+            for name in lightNames {
+                if let lightFont = UIFont(name: name, size: size) {
+                    return Font(lightFont)
+                }
+            }
+        case .ultraLight, .thin:
+            // Extra light weight
+            let extralightNames = ["Karu-ExtraLight", "Karu ExtraLight", "karu-extralight", "KaruExtralight"]
+            for name in extralightNames {
+                if let extralightFont = UIFont(name: name, size: size) {
+                    return Font(extralightFont)
+                }
+            }
+            // Fallback to light if extra light not found
             let lightNames = ["Karu-Light", "Karu Light", "karu-light"]
             for name in lightNames {
                 if let lightFont = UIFont(name: name, size: size) {
@@ -365,6 +410,8 @@ extension Color {
         let colorName: String
         
         switch token {
+        case .black:
+            colorName = "black"
         case .blueAccent:
             colorName = "blueAccent"
         case .blueishSurface:

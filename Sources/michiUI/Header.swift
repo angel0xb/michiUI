@@ -65,9 +65,10 @@ public struct Header: View {
             
             if let subtitle = subtitle {
                 Text(subtitle)
-                    .font(.token(.titleMedium))
+                    .font(.token(.titleSmall))
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
+                    
             }
                 
             if title != nil || subtitle != nil {
@@ -75,11 +76,8 @@ public struct Header: View {
                     .padding(.bottom, 8)
             }
             
-            if let description = description {
-                Text(description)
-                    .font(.token(.labelSmall))
-                    .fontWeight(.light)
-                    .multilineTextAlignment(.center)
+            if let description {
+                descriptionText(description)
             }
         }
         .padding()
@@ -90,15 +88,15 @@ public struct Header: View {
         VStack(spacing: 8) {
             if title != nil || subtitle != nil {
                 HStack {
-                    if let title = title {
+                    if let title {
                         Text(title)
                             .font(.token(.titleLarge))
                             .lineLimit(1)
                             .foregroundColor(accentColor)
                     }
                     
-                    if let subtitle = subtitle {
-                        Text(subtitle)
+                    if let subtitle {
+                        Text(boldFirstLetter(subtitle))
                             .font(.token(.labelExtraLarge))
                     }
                 }
@@ -109,15 +107,20 @@ public struct Header: View {
                     .padding(.bottom, 8)
             }
             
-            if let description = description {
-                Text(description)
-                    .font(.token(.labelSmall))
-                    .fontWeight(.light)
-                    .multilineTextAlignment(.center)
+            if let description {
+                descriptionText(description)
             }
         }
         .padding()
         .background(Color.token(.orangeYellowSurface))
+    }
+    
+    func descriptionText(_ text: AttributedString) -> some View {
+        Text(text)
+            .font(.tokenLight(.labelSmall))
+            .multilineTextAlignment(.center)
+            .lineSpacing(6)
+            .fixedSize(horizontal: false, vertical: true)
     }
     
     var dottedLine: some View {
@@ -132,61 +135,138 @@ public struct Header: View {
         .frame(height: 2)
     }
     
-    // Helper to create AttributedString with markdown and preserve font
-    private func attributedMarkdown(_ markdown: String, font: Font) -> AttributedString {
-        var attributedString = try! AttributedString(markdown: markdown)
+    // Helper to bold the first letter of an AttributedString
+    private func boldFirstLetter(_ attributedString: AttributedString) -> AttributedString {
+        var result = attributedString
         
-        // Apply font to the entire string
-        // Since we're using font family names, SwiftUI should automatically
-        // use the bold variant for text that markdown made bold
-        var fontContainer = AttributeContainer()
-        fontContainer.font = font
+        // Find the first non-whitespace character by iterating through runs
+        var firstCharStart: AttributedString.Index?
+        var firstCharEnd: AttributedString.Index?
         
-        // Apply to entire string - the font family approach should preserve bold
-        attributedString.setAttributes(fontContainer)
+        var currentIndex = result.startIndex
+        while currentIndex < result.endIndex {
+            let char = result.characters[currentIndex]
+            if !char.isWhitespace {
+                firstCharStart = currentIndex
+                firstCharEnd = result.index(afterCharacter: currentIndex)
+                break
+            }
+            currentIndex = result.index(afterCharacter: currentIndex)
+        }
         
-        return attributedString
+        guard let start = firstCharStart, let end = firstCharEnd else {
+            return result
+        }
+        
+        // Apply bold trait to the first character
+        var boldContainer = AttributeContainer()
+        boldContainer.inlinePresentationIntent = .stronglyEmphasized
+        
+        result[start..<end].setAttributes(boldContainer)
+        
+        return result
     }
+    
 }
 
 
 #Preview {
     CustomFont.register()
-    return VStack {
-        Header(title: "ナ ッ ク ル ズ ・ ザ ・ エ キ ド ゥ ナ",
-               subtitle: " 宙 ⼀ の ト レ ジ ャ ー ハ ン タ ー",
-               description:
-                """
-                    エ ン ジ ェ ル ア イ ラ ン ド で 、 マ ス タ ー エ メ ラ ル
-                     ド と 呼 ば れ る 巨 ⼤ な 宝 ⽯ を 守 っ て 暮 ら し て い る
-                     ハ リ モ グ ラ 。 か つ て 、 D r . エ ッ グ マ ン に だ ま さ
-                     れ て 、 ソ ニ ッ ク と 戦 っ た 経 験 も あ る 。 単 細 な 性
-                """,
-               style: .stacked,
-               theme: .pink
-        )
-        Divider()
-        Header(title: "チ ャ オ ",
-               subtitle: try! AttributedString(markdown:"**C**hao"),
-               description:
-                """
-                    エ ン ジ ェ ル ア イ ラ ン ド で 、 マ ス タ ー エ メ ラ ル
-                     ド と 呼 ば れ る 巨 ⼤ な 宝 ⽯ を 守 っ て 暮 ら し て い る
-                     ハ リ モ グ ラ 。 か つ て 、 D r . エ ッ グ マ ン に だ ま さ
-                     れ て 、 ソ ニ ッ ク と 戦 っ た 経 験 も あ る 。 単 細 な 性
-                """,
-               style: .inline,
-               theme: .blue
-        )
-        .dottedBorder(
-               cornerRadius: 12,
-               lineWidth: 3,
-               dashLength: 6,
-               gapLength: 4,
-               color: .blue
-           )
-        .padding(.horizontal)
-        Spacer()
+    return ScrollView {
+        VStack {
+            Header(title: "ナ ッ ク ル ズ ・ ザ ・ エ キ ド ゥ ナ",
+                   subtitle: " 宙 ⼀ の ト レ ジ ャ ー ハ ン タ ー",
+                   description:
+                    """
+                        エ ン ジ ェ ル ア イ ラ ン ド で 、 マ ス タ ー エ メ ラ ル
+                         ド と 呼 ば れ る 巨 ⼤ な 宝 ⽯ を 守 っ て 暮 ら し て い る
+                         ハ リ モ グ ラ 。 か つ て 、 D r . エ ッ グ マ ン に だ ま さ
+                         れ て 、 ソ ニ ッ ク と 戦 っ た 経 験 も あ る 。 単 細 な 性
+                    """,
+                   style: .stacked,
+                   theme: .pink
+            )
+            
+            Header(title: "Knuckles the Echidna",
+                   subtitle: "The greatest treasure hunter in the world.",
+                   description:
+                    "A echidna who lives on Angel Island, protecting the gigantic gemstone known as the Master Emerald. In the past, he was once deceived by Dr. Eggman and even fought Sonic. He has a simple-minded personality",
+                   style: .stacked,
+                   theme: .pink
+            )
+            
+            Header(title: "Knuckles the Echidna",
+                   description:
+                    "A echidna who lives on Angel Island, protecting the gigantic gemstone known as the Master Emerald. In the past, he was once deceived by Dr. Eggman and even fought Sonic. He has a simple-minded personality",
+                   style: .stacked,
+                   theme: .pink
+            )
+            
+            Header(
+                subtitle: "The greatest treasure hunter in the world.",
+                   description:
+                    "A echidna who lives on Angel Island, protecting the gigantic gemstone known as the Master Emerald. In the past, he was once deceived by Dr. Eggman and even fought Sonic. He has a simple-minded personality",
+                   style: .stacked,
+                   theme: .pink
+            )
+            Header(title: "チ ャ オ ",
+                   subtitle: try! AttributedString(markdown:"**C**hao"),
+                   description:
+                    """
+                        エ ン ジ ェ ル ア イ ラ ン ド で 、 マ ス タ ー エ メ ラ ル
+                         ド と 呼 ば れ る 巨 ⼤ な 宝 ⽯ を 守 っ て 暮 ら し て い る
+                         ハ リ モ グ ラ 。 か つ て 、 D r . エ ッ グ マ ン に だ ま さ
+                         れ て 、 ソ ニ ッ ク と 戦 っ た 経 験 も あ る 。 単 細 な 性
+                    """,
+                   style: .inline,
+                   theme: .blue
+            )
+            .dottedBorder(
+                cornerRadius: 12,
+                lineWidth: 3,
+                dashLength: 6,
+                gapLength: 4,
+                color: .blue
+            )
+            .padding(.horizontal)
+            
+            Header(title: "Title",
+                   subtitle: "Chao",
+                   description:
+                    """
+                    To access the Chao Lobby, pick up a Chao Key from one of the Chao Boxes in any of the game's stages. Upon completing the stage, you're automatically transported to the Chao Lobby. From there, you'll find the entrance to both the Chao Garden and the Kindergarten.
+                    """,
+                   style: .inline,
+                   theme: .blue
+            )
+            .dottedBorder(
+                cornerRadius: 12,
+                lineWidth: 3,
+                dashLength: 6,
+                gapLength: 4,
+                color: .blue
+            )
+            .padding(.horizontal)
+            
+            Header(
+                   subtitle: "Chao",
+                   description:
+                    """
+                    To access the Chao Lobby, pick up a Chao Key from one of the Chao Boxes in any of the game's stages. Upon completing the stage, you're automatically transported to the Chao Lobby. From there, you'll find the entrance to both the Chao Garden and the Kindergarten.
+                    """,
+                   style: .inline,
+                   theme: .blue
+            )
+            .dottedBorder(
+                cornerRadius: 12,
+                lineWidth: 3,
+                dashLength: 6,
+                gapLength: 4,
+                color: .blue
+            )
+            .padding(.horizontal)
+            Spacer()
+        }
     }
     
 }
