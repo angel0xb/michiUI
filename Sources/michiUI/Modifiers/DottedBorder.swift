@@ -8,13 +8,20 @@
 import SwiftUI
 
 /// A custom shape that draws a border with solid corners and dotted straight edges
-struct DottedBorderShape: Shape {
+public struct DottedBorderShape: Shape {
     var cornerRadius: CGFloat
     var lineWidth: CGFloat
     var dashLength: CGFloat
     var gapLength: CGFloat
     
-    func path(in rect: CGRect) -> Path {
+    public init(cornerRadius: CGFloat, lineWidth: CGFloat, dashLength: CGFloat, gapLength: CGFloat) {
+        self.cornerRadius = cornerRadius
+        self.lineWidth = lineWidth
+        self.dashLength = dashLength
+        self.gapLength = gapLength
+    }
+    
+    public func path(in rect: CGRect) -> Path {
         var path = Path()
         
         let width = rect.width
@@ -137,14 +144,14 @@ struct DottedBorderShape: Shape {
 }
 
 /// View modifier that applies a dotted border with solid corners
-struct DottedBorderModifier: ViewModifier {
+public struct DottedBorderModifier: ViewModifier {
     var cornerRadius: CGFloat = 8
     var lineWidth: CGFloat = 2
     var dashLength: CGFloat = 4
     var gapLength: CGFloat = 4
     var color: Color = .primary
     
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .overlay(
@@ -159,7 +166,7 @@ struct DottedBorderModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     /// Applies a dotted border with solid corners around the view
     /// - Parameters:
     ///   - cornerRadius: The radius of the corners (default: 8)
@@ -167,12 +174,12 @@ extension View {
     ///   - dashLength: The length of each dash (default: 4)
     ///   - gapLength: The length of each gap between dashes (default: 4)
     ///   - color: The color of the border (default: .primary)
-    func dottedBorder(
+   public  func dottedBorder(
         cornerRadius: CGFloat = 8,
         lineWidth: CGFloat = 2,
         dashLength: CGFloat = 4,
         gapLength: CGFloat = 4,
-        color: Color = .primary
+        color: Color = .token(.black)
     ) -> some View {
         modifier(
             DottedBorderModifier(

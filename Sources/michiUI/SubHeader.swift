@@ -15,7 +15,7 @@ public struct SubHeader: View {
     let subtitle: String?
     let description: String?
     
-    enum Theme {
+    public enum Theme {
         case primary
         case secondary
         case pink
@@ -23,7 +23,7 @@ public struct SubHeader: View {
     }
     
     
-    init(text: String, subText: String? = nil, subtitle: String? = nil, description: String? = nil, theme: Theme = .primary) {
+   public  init(text: String, subText: String? = nil, subtitle: String? = nil, description: String? = nil, theme: Theme = .primary) {
         self.text = text
         self.subText = subText
         self.theme = theme

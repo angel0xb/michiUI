@@ -10,14 +10,15 @@ import SwiftUI
 
 public struct Header: View {
     
-    enum Style {
+    public enum Style {
         case stacked
         case inline
     }
     
-    enum Theme {
+   public  enum Theme {
         case blue
         case pink
+        case black
     }
     
     let title: AttributedString?
@@ -26,7 +27,7 @@ public struct Header: View {
     let style: Style
     let theme: Theme
     
-    init(title: AttributedString? = nil, subtitle: AttributedString? = nil, description: AttributedString? = nil, style: Style = .stacked, theme: Theme = .pink) {
+    public init(title: AttributedString? = nil, subtitle: AttributedString? = nil, description: AttributedString? = nil, style: Style = .stacked, theme: Theme = .pink) {
         self.title = title
         self.subtitle = subtitle
         self.description = description
@@ -37,10 +38,19 @@ public struct Header: View {
     // Helper to get accent color based on theme
     private var accentColor: Color {
         switch theme {
-        case .pink:
-            return .token(.pink)
-        case .blue:
-            return .token(.blueAccent)
+        case .pink: .token(.pink)
+        case .blue: .token(.blueAccent)
+        case .black: .token(.black)
+        }
+    }
+    
+    // Helper to get background color based on theme
+    private var backgroundColor: Color {
+        switch theme {
+        case .pink, .blue:
+                .token(.orangeYellowSurface)
+        case .black:
+            .token(.customOrange)
         }
     }
     
@@ -55,19 +65,20 @@ public struct Header: View {
     var stacked: some View {
         VStack(alignment: .center, spacing: 8) {
             
-            if let title = title {
+            if let title {
                 Text(title)
                     .font(.token(.titleMedium))
                     .multilineTextAlignment(.center)
-                    .lineLimit(3)
+//                    .lineLimit(3)
                     .foregroundColor(accentColor)
+                    .padding(.bottom, subtitle == nil ? 0 : -14)
             }
             
-            if let subtitle = subtitle {
+            if let subtitle {
                 Text(subtitle)
                     .font(.token(.titleSmall))
                     .multilineTextAlignment(.center)
-                    .lineLimit(3)
+//                    .lineLimit(3)
                     
             }
                 
@@ -81,7 +92,7 @@ public struct Header: View {
             }
         }
         .padding()
-        .background(Color.token(.orangeYellowSurface))
+        .background(backgroundColor)
     }
     
     var inline: some View {
@@ -112,7 +123,7 @@ public struct Header: View {
             }
         }
         .padding()
-        .background(Color.token(.orangeYellowSurface))
+        .background(backgroundColor)
     }
     
     func descriptionText(_ text: AttributedString) -> some View {
@@ -192,7 +203,15 @@ public struct Header: View {
                    description:
                     "A echidna who lives on Angel Island, protecting the gigantic gemstone known as the Master Emerald. In the past, he was once deceived by Dr. Eggman and even fought Sonic. He has a simple-minded personality",
                    style: .stacked,
-                   theme: .pink
+                   theme: .blue
+            )
+            
+            Header(title: "Knuckles the Echidna",
+                   subtitle: "The greatest treasure hunter in the world.",
+                   description:
+                    "A echidna who lives on Angel Island, protecting the gigantic gemstone known as the Master Emerald. In the past, he was once deceived by Dr. Eggman and even fought Sonic. He has a simple-minded personality",
+                   style: .stacked,
+                   theme: .black
             )
             
             Header(title: "Knuckles the Echidna",

@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// Direction for stripe patterns
-enum StripeDirection {
+public enum StripeDirection {
     case horizontal
     case vertical
     case diagonal
@@ -16,13 +16,25 @@ enum StripeDirection {
 }
 
 /// A view that creates a striped pattern with alternating gray lines
-struct StripedPattern: View {
+public struct StripedPattern: View {
     var stripeWidth: CGFloat = 4
-    var color1: Color = Color.gray.opacity(0.2)
-    var color2: Color = Color.gray.opacity(0.4)
+    var color1: Color = Color(white: 0.98) // very light gray
+    var color2: Color = Color.white // white
     var direction: StripeDirection = .diagonal
     
-    var body: some View {
+    public init(
+        stripeWidth: CGFloat,
+        color1: Color = .gray.opacity(0.9),
+        color2: Color = .secondary.opacity(0.9),
+        direction: StripeDirection
+    ) {
+        self.stripeWidth = stripeWidth
+        self.color1 = color1
+        self.color2 = color2
+        self.direction = direction
+    }
+    
+    public var body: some View {
         GeometryReader { geometry in
             let width = geometry.size.width
             let height = geometry.size.height
@@ -158,36 +170,40 @@ struct StatusItemView: View {
 }
 
 #Preview {
-    StripedPattern(
-        stripeWidth: 2,
-        color1: .gray.opacity( 0.4),
-        color2: .gray.opacity( 0.6),
-        direction: .diagonal
-    )
-    .frame(width: 100, height: 100)
-    
-    StripedPattern(
-        stripeWidth: 2,
-        color1: .gray.opacity( 0.4),
-        color2: .gray.opacity( 0.6),
-        direction: .diagonalReversed
-    )
-    .frame(width: 100, height: 100)
-    
-    StripedPattern(
-        stripeWidth: 1,
-        color1: .gray.opacity( 0.4),
-        color2: .gray.opacity( 0.6),
-        direction: .horizontal
-    )
-    .frame(width: 100, height: 100)
-    
-    StripedPattern(
-        stripeWidth: 1,
-        color1: .gray.opacity( 0.4),
-        color2: .gray.opacity( 0.6),
-        direction: .vertical
-    )
-    .frame(width: 100, height: 100)
+    VStack {
+        StripedPattern(
+            stripeWidth: 2,
+    //        color1: .gray.opacity( 0.4),
+    //        color2: .gray.opacity( 0.6),
+            direction: .diagonal
+        )
+        .frame(width: 100, height: 100)
+        
+        StripedPattern(
+            stripeWidth: 2,
+            color1: .gray.opacity( 0.4),
+            color2: .gray.opacity( 0.6),
+            direction: .diagonalReversed
+        )
+        .frame(width: 100, height: 100)
+        
+        StripedPattern(
+            stripeWidth: 2,
+            color1: .gray.opacity( 0.4),
+            color2: .gray.opacity( 0.6),
+            direction: .horizontal
+        )
+        .frame(width: 100, height: 100)
+        
+        StripedPattern(
+            stripeWidth: 1,
+            color1: .gray.opacity( 0.4),
+            color2: .gray.opacity( 0.6),
+            direction: .vertical
+        )
+        .frame(width: 100, height: 100)
+    }
+    .background(.white)
+   
     
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// A view that creates multiple concentric circle strokes
-struct MultiStrokeCircle: View {
+public struct MultiStrokeCircle: View {
     let outerColor: Color
     let outerWidth: CGFloat
     let middleColor: Color
@@ -16,7 +16,16 @@ struct MultiStrokeCircle: View {
     let innerColor: Color
     let innerWidth: CGFloat
     
-    var body: some View {
+    public init(outerColor: Color, outerWidth: CGFloat, middleColor: Color, middleWidth: CGFloat, innerColor: Color, innerWidth: CGFloat) {
+        self.outerColor = outerColor
+        self.outerWidth = outerWidth
+        self.middleColor = middleColor
+        self.middleWidth = middleWidth
+        self.innerColor = innerColor
+        self.innerWidth = innerWidth
+    }
+    
+    public var body: some View {
         Circle()
             .stroke(outerColor, lineWidth: outerWidth)
             .padding(outerWidth / 2)

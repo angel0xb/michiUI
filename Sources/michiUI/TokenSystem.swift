@@ -40,6 +40,7 @@ public enum FontToken {
     case titleSmall
     case titleExtraLarge
     case titleExtraSmall
+    case titleTiny
     
     // Label fonts (Karu Font Family)
     case labelLarge
@@ -47,6 +48,7 @@ public enum FontToken {
     case labelSmall
     case labelExtraLarge
     case labelExtraSmall
+    case labelTiny
     case body
     case caption
 }
@@ -238,6 +240,8 @@ extension Font {
             return microgrammaFont(size: 18)
         case .titleExtraSmall:
             return microgrammaFont(size: 14)
+        case .titleTiny:
+            return microgrammaFont(size: 12)
         
         // Label fonts (Karu Font Family)
         case .labelExtraLarge:
@@ -250,6 +254,8 @@ extension Font {
             return karuFont(size: 14)
         case .labelExtraSmall:
             return karuFont(size: 12)
+        case .labelTiny:
+            return karuFont(size: 10)
         case .body:
             return karuFont(size: 16)
         case .caption:
@@ -264,7 +270,7 @@ extension Font {
     public static func tokenLight(_ token: FontToken) -> Font {
         switch token {
         // Title fonts don't have light variants, return regular
-        case .titleExtraLarge, .titleLarge, .titleMedium, .titleSmall, .titleExtraSmall:
+        case .titleExtraLarge, .titleLarge, .titleMedium, .titleSmall, .titleExtraSmall, .titleTiny:
             return .token(token)
         
         // Label fonts (Karu Font Family) - use light weight
@@ -278,11 +284,29 @@ extension Font {
             return karuFont(size: 14, weight: .light)
         case .labelExtraSmall:
             return karuFont(size: 12, weight: .light)
+        case .labelTiny:
+            return karuFont(size: 10, weight: .light)
         case .body:
             return karuFont(size: 16, weight: .light)
         case .caption:
             return karuFont(size: 12, weight: .light)
         }
+    }
+    
+    /// Creates a title font with a custom size
+    /// - Parameter size: The font size in points
+    /// - Returns: A configured Font using Microgramma D Extended Bold
+    public static func title(size: CGFloat) -> Font {
+        return microgrammaFont(size: size)
+    }
+    
+    /// Creates a label font with a custom size
+    /// - Parameters:
+    ///   - size: The font size in points
+    ///   - weight: The font weight (default: .regular)
+    /// - Returns: A configured Font using Karu Font Family
+    public static func label(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        return karuFont(size: size, weight: weight)
     }
     
     /// Helper to create Microgramma font

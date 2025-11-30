@@ -7,40 +7,32 @@
 
 import SwiftUI
 
-struct WidthPreferenceKey: PreferenceKey {
-    nonisolated(unsafe) static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = max(value, nextValue())
-    }
-}
-
-enum CardVariant {
+public enum CardVariant {
     case pink
     case yellow
 }
 
-enum CardImage {
+public enum CardImage {
     case image(Image)
     case anyView(AnyView)
     
-    init(_ image: Image) {
+    public init(_ image: Image) {
         self = .image(image)
     }
     
-    init<V: View>(_ view: V) {
+    public init<V: View>(_ view: V) {
         self = .anyView(AnyView(view))
     }
 }
 
-struct Card: View {
+public struct Card: View {
     var title: String?
     var subtitle: String?
     var image: CardImage?
     var bulletedList: [String] = []
     var variant: CardVariant = .pink
-    @State private var contentWidth: CGFloat = 0
     
-    init(
+    public init(
         title: String? = nil,
         subtitle: String? = nil,
         image: CardImage? = nil,
@@ -54,7 +46,7 @@ struct Card: View {
         self.variant = variant
     }
     
-    init(
+    public init(
         title: String? = nil,
         subtitle: String? = nil,
         image: Image? = nil,
@@ -68,7 +60,7 @@ struct Card: View {
         self.variant = variant
     }
     
-    init<V: View>(
+    public init<V: View>(
         title: String? = nil,
         subtitle: String? = nil,
         customView: V? = nil,
@@ -82,18 +74,10 @@ struct Card: View {
         self.variant = variant
     }
    
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             if let title {
                 titleSection(title)
-                    .background(
-                        GeometryReader { geometry in
-                            Color.clear.preference(
-                                key: WidthPreferenceKey.self,
-                                value: geometry.size.width
-                            )
-                        }
-                    )
                     .padding(.horizontal)
                     
             }
@@ -101,23 +85,14 @@ struct Card: View {
             if image != nil || subtitle != nil {
                 subTitleSection(subtitle ?? "")
                     .padding(.horizontal)
-                    .background(
-                        GeometryReader { geometry in
-                            Color.clear.preference(
-                                key: WidthPreferenceKey.self,
-                                value: geometry.size.width
-                            )
-                        }
-                    )
                     
             }
             
             // dotted line
-            if contentWidth > 0 {
-                DottedLine()
-                    .fill(Color.token(.black))
-                    .frame(width: contentWidth, height: 2)
-            }
+            DottedLine()
+                .fill(Color.token(.black))
+                .frame(height: 2)
+                .padding(.horizontal)
                 
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(bulletedList, id: \.self) { item in
@@ -127,11 +102,8 @@ struct Card: View {
             .padding([.horizontal, .bottom])
         }
         .background(backgroundColor)
-        .cornerRadius(12)
+        .cornerRadius(16)
         .fixedSize(horizontal: false, vertical: true)
-        .onPreferenceChange(WidthPreferenceKey.self) { width in
-            contentWidth = width
-        }
     }
     
     var backgroundColor: Color {
@@ -157,10 +129,8 @@ struct Card: View {
     
     var titleTextColor: Color {
         switch variant {
-        case .pink:
-            return .white
-        case .yellow:
-            return Color.token(.black)
+        case .pink: .white
+        case .yellow: Color.token(.black)
         }
     }
     
@@ -174,7 +144,7 @@ struct Card: View {
     func titleSection(_ title: String) -> some View {
         HStack(spacing: 3) {
             titleBarColor
-                .frame(width: 3)
+                .frame(width: 4)
             
             Text(title)
                 .font(.token(.titleMedium))
@@ -252,7 +222,7 @@ struct Card: View {
             // Using CardImage enum directly
             Card(
                 title: "Title",
-                subtitle: "subTitle",
+                subtitle: "longer subtitle",
                 image: .image(Image(systemName: "photo.artframe")),
                 bulletedList: ["first bullet", "second bullet"]
             )
@@ -267,5 +237,6 @@ struct Card: View {
             
             Spacer()
         }
+        .padding(.horizontal)
     }
 }
