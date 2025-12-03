@@ -29,6 +29,14 @@ public struct MichiButton: View {
     let style: Style
     let action: () -> Void
     
+    @State private var isPressed = false
+    @State private var hapticTrigger = false
+    
+    // 3D effect offset - button moves down when pressed
+    private var offsetY: CGFloat {
+        isPressed ? 0 : -8
+    }
+    
     public init(
         _ title: String,
         theme: Theme = .primary,
@@ -54,10 +62,60 @@ public struct MichiButton: View {
     }
     
     public var body: some View {
-        Button(action: action) {
-            buttonContent
+        ZStack {
+            // Shadow layer (darker, behind) - only for filled style
+            if style == .filled {
+                shadowLayer
+            }
+            
+            // Main button layer (moves up when not pressed)
+            Button(action: {
+                hapticTrigger.toggle()
+                action()
+            }) {
+                buttonContent
+            }
+            .buttonStyle(PlainButtonStyle())
+            .offset(y: offsetY)
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        withAnimation(.spring(.snappy(duration: 0.05))) {
+                            isPressed = true
+                        }
+                    }
+                    .onEnded { _ in
+                        withAnimation(.spring(.snappy(duration: 0.05))) {
+                            isPressed = false
+                        }
+                    }
+            )
+            .sensoryFeedback(.selection, trigger: hapticTrigger)
         }
-        .buttonStyle(PlainButtonStyle())
+    }
+    
+    // Shadow layer for 3D effect
+    @ViewBuilder
+    private var shadowLayer: some View {
+        let shadowContent = Text(" ")
+            .font(.token(.titleSmall))
+            .foregroundStyle(textColor)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background(backgroundColor.opacity(0.7))
+            .padding(2)
+            .dottedBorder(
+                cornerRadius: 21,
+                lineWidth: 5,
+                dashLength: 16,
+                gapLength: 0,
+                color: .token(.tealSecondary)
+            )
+            .clipShape(.capsule)
+            .padding(2)
+        
+        shadowContent
     }
     
     @ViewBuilder
@@ -81,7 +139,7 @@ public struct MichiButton: View {
                     gapLength: 0,
                     color: .token(.tealSecondary)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(.capsule/*RoundedRectangle(cornerRadius: 16)*/)
                 .padding(2)
                 .overlay(alignment: .topTrailing) {
         //                    circle(alignment: .bottomLeading)
@@ -155,6 +213,67 @@ public struct MichiButton: View {
         case .plain, .bordered:
             return Color.token(themeColor)
         }
+    }
+}
+
+// MARK: - View Modifiers
+
+public struct ButtonThemeModifier: ViewModifier {
+    let theme: MichiButton.Theme
+    let style: MichiButton.Style?
+    let title: String
+    let action: () -> Void
+    
+    public func body(content: Content) -> some View {
+        MichiButton(
+            title,
+            theme: theme,
+            style: style ?? .filled,
+            action: action
+        )
+    }
+}
+
+public extension View {
+    /// Modifies the button's theme and optionally its style
+    /// - Parameters:
+    ///   - theme: The new theme to apply
+    ///   - style: Optional new style to apply (nil keeps current style)
+    ///   - title: The button title
+    ///   - action: The button action
+    /// - Returns: A new button with the specified theme and style
+    func buttonTheme(
+        _ theme: MichiButton.Theme,
+        style: MichiButton.Style? = nil,
+        title: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        modifier(ButtonThemeModifier(theme: theme, style: style, title: title, action: action))
+    }
+}
+
+public extension MichiButton {
+    /// Returns a new button with a different theme
+    /// - Parameter theme: The new theme to apply
+    /// - Returns: A new button with the updated theme
+    func theme(_ theme: Theme) -> MichiButton {
+        MichiButton(title, theme: theme, style: style, action: action)
+    }
+    
+    /// Returns a new button with a different style
+    /// - Parameter style: The new style to apply
+    /// - Returns: A new button with the updated style
+    func style(_ style: Style) -> MichiButton {
+        MichiButton(title, theme: theme, style: style, action: action)
+    }
+    
+    /// Returns a new button with both theme and style changed
+    /// - Parameters:
+    ///   - theme: The new theme to apply
+    ///   - style: The new style to apply
+    /// - Returns: A new button with the updated theme and style
+    func theme(_ theme: Theme, style: Style) -> MichiButton {
+        MichiButton(title, theme: theme, style: style, action: action)
     }
 }
 
