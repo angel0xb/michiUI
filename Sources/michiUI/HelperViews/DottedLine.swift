@@ -11,6 +11,11 @@ public struct DottedLine: Shape {
     var dotRadius: CGFloat = 1
     var spacing: CGFloat = 6
     
+    public init(dotRadius: CGFloat = 1, spacing: CGFloat = 6) {
+        self.dotRadius = dotRadius
+        self.spacing = spacing
+    }
+    
     public func path(in rect: CGRect) -> Path {
         var path = Path()
         let centerY = rect.midY

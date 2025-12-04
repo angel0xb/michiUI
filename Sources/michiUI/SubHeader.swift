@@ -20,6 +20,7 @@ public struct SubHeader: View {
         case secondary
         case pink
         case blueSecondary
+        case yellow
     }
     
     
@@ -41,6 +42,8 @@ public struct SubHeader: View {
             return subText != nil ? .customTeal : .pinkAccent
         case .blueSecondary:
             return subText != nil ? .customTeal : .blueSecondary
+        case .yellow:
+            return subText != nil ? .customTeal : .yellowOrangeSecondary
         }
     }
     
@@ -54,6 +57,8 @@ public struct SubHeader: View {
             return .pinkAccent
         case .blueSecondary:
             return .blueSecondary
+        case .yellow:
+            return .yellowOrangeSecondary
         }
     }
     
@@ -102,6 +107,23 @@ public struct SubHeader: View {
     }
 }
 
+// MARK: - View Modifiers
+
+public extension SubHeader {
+    /// Returns a new SubHeader with a different theme
+    /// - Parameter theme: The new theme to apply
+    /// - Returns: A new SubHeader with the updated theme
+    func theme(_ theme: Theme) -> SubHeader {
+        SubHeader(
+            text: text,
+            subText: subText,
+            subtitle: subtitle,
+            description: description,
+            theme: theme
+        )
+    }
+}
+
 #Preview {
     CustomFont.register()
    return VStack(spacing: 20) {
@@ -109,11 +131,13 @@ public struct SubHeader: View {
        SubHeader(text: "TEST", theme: .secondary)
        SubHeader(text: "TEST", theme: .pink)
        SubHeader(text: "TEST", theme: .blueSecondary)
+       SubHeader(text: "TEST", theme: .yellow)
        
        SubHeader(text: "TEST", subText: "sub text", theme: .primary)
        SubHeader(text: "TEST", subText: "sub text", theme: .secondary)
        SubHeader(text: "TEST", subText: "sub text", theme: .pink)
        SubHeader(text: "TEST", subText: "sub text", theme: .blueSecondary)
+       SubHeader(text: "TEST", subText: "sub text", theme: .yellow)
        
        
        SubHeader(
