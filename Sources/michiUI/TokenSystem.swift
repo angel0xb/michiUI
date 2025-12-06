@@ -41,6 +41,7 @@ public enum FontToken {
     case titleExtraLarge
     case titleExtraSmall
     case titleTiny
+    case title(size: CGFloat)
     
     // Label fonts (Karu Font Family)
     case labelLarge
@@ -242,6 +243,8 @@ extension Font {
             return microgrammaFont(size: 14)
         case .titleTiny:
             return microgrammaFont(size: 12)
+        case .title(let size):
+            return microgrammaFont(size: size)
         
         // Label fonts (Karu Font Family)
         case .labelExtraLarge:
@@ -270,7 +273,7 @@ extension Font {
     public static func tokenLight(_ token: FontToken) -> Font {
         switch token {
         // Title fonts don't have light variants, return regular
-        case .titleExtraLarge, .titleLarge, .titleMedium, .titleSmall, .titleExtraSmall, .titleTiny:
+        case .titleExtraLarge, .titleLarge, .titleMedium, .titleSmall, .titleExtraSmall, .titleTiny, .title:
             return .token(token)
         
         // Label fonts (Karu Font Family) - use light weight
