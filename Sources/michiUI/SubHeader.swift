@@ -14,6 +14,8 @@ public struct SubHeader: View {
     let theme: Theme
     let subtitle: String?
     let description: String?
+    let customTextColor: ColorToken?
+    let customSubTextColor: ColorToken?
     
     public enum Theme {
         case primary
@@ -21,18 +23,37 @@ public struct SubHeader: View {
         case pink
         case blueSecondary
         case yellow
+        case green
+        case lightGreen
+        case purple
     }
     
     
-   public  init(text: String, subText: String? = nil, subtitle: String? = nil, description: String? = nil, theme: Theme = .primary) {
+    public init(text: String, subText: String? = nil, subtitle: String? = nil, description: String? = nil, theme: Theme = .primary) {
         self.text = text
         self.subText = subText
         self.theme = theme
         self.subtitle = subtitle
         self.description = description
+        self.customTextColor = nil
+        self.customSubTextColor = nil
+    }
+    
+    public init(text: String, subText: String? = nil, subtitle: String? = nil, description: String? = nil, theme: Theme = .primary, textColor: ColorToken? = nil, subTextColor: ColorToken? = nil) {
+        self.text = text
+        self.subText = subText
+        self.theme = theme
+        self.subtitle = subtitle
+        self.description = description
+        self.customTextColor = textColor
+        self.customSubTextColor = subTextColor
     }
     
     private var textBackgroundColor: ColorToken {
+        if let customTextColor {
+            return customTextColor
+        }
+        
         switch theme {
         case .primary:
             return .customTeal
@@ -44,10 +65,20 @@ public struct SubHeader: View {
             return subText != nil ? .customTeal : .blueSecondary
         case .yellow:
             return subText != nil ? .customTeal : .yellowOrangeSecondary
+        case .green:
+            return subText != nil ? .customTeal : .green
+        case .lightGreen:
+            return subText != nil ? .customTeal : .lightGreen
+        case .purple:
+            return subText != nil ? .customTeal : .purpleAccent
         }
     }
     
     private var subTextBackgroundColor: ColorToken {
+        if let customSubTextColor {
+            return customSubTextColor
+        }
+        
         switch theme {
         case .primary:
             return .tealSecondary
@@ -59,6 +90,12 @@ public struct SubHeader: View {
             return .blueSecondary
         case .yellow:
             return .yellowOrangeSecondary
+        case .green:
+            return .green
+        case .lightGreen:
+            return .lightGreen
+        case .purple:
+            return .purpleAccent
         }
     }
     
@@ -119,63 +156,103 @@ public extension SubHeader {
             subText: subText,
             subtitle: subtitle,
             description: description,
-            theme: theme
+            theme: theme,
+            textColor: customTextColor,
+            subTextColor: customSubTextColor
+        )
+    }
+    
+    /// Returns a new SubHeader with custom colors for text and subText
+    /// - Parameters:
+    ///   - textColor: The color token for the main text background
+    ///   - subTextColor: The color token for the subText background (only used when subText is present)
+    /// - Returns: A new SubHeader with the custom colors
+    func colors(textColor: ColorToken? = nil, subTextColor: ColorToken? = nil) -> SubHeader {
+        SubHeader(
+            text: text,
+            subText: subText,
+            subtitle: subtitle,
+            description: description,
+            theme: theme,
+            textColor: textColor ?? customTextColor,
+            subTextColor: subTextColor ?? customSubTextColor
         )
     }
 }
 
 #Preview {
     CustomFont.register()
-   return VStack(spacing: 20) {
-        SubHeader(text: "TEST")
-       SubHeader(text: "TEST", theme: .secondary)
-       SubHeader(text: "TEST", theme: .pink)
-       SubHeader(text: "TEST", theme: .blueSecondary)
-       SubHeader(text: "TEST", theme: .yellow)
-       
-       SubHeader(text: "TEST", subText: "sub text", theme: .primary)
-       SubHeader(text: "TEST", subText: "sub text", theme: .secondary)
-       SubHeader(text: "TEST", subText: "sub text", theme: .pink)
-       SubHeader(text: "TEST", subText: "sub text", theme: .blueSecondary)
-       SubHeader(text: "TEST", subText: "sub text", theme: .yellow)
-       
-       
-       SubHeader(
-        text: "TEST",
-        subText: "sub text",
-        subtitle: "this is a subtitle",
-        description: "some text for description should wrap if its too long so that it fits under",
-        theme: .primary
-       )
-       
-       
-       SubHeader(
-        text: "banana",
-        subText: "100",
-        subtitle: "fruit",
-        description: "some text for description should wrap if its too long so that it fits under",
-        theme: .primary
-       )
-       
-       SubHeader(
-        text: "power",
-        subText: "100"
-       )
-       SubHeader(
-        text: "fly",
-        subText: "30"
-       )
-       
-       SubHeader(
-        text: "run",
-        subText: "100",
-        theme: .pink
-       )
-       
-       SubHeader(
-        text: "mood",
-        subText: "1/10",
-        theme: .pink
-       )
+    return ScrollView {
+        VStack(spacing: 20) {
+            SubHeader(text: "TEST")
+            SubHeader(text: "TEST", theme: .secondary)
+            SubHeader(text: "TEST", theme: .pink)
+            SubHeader(text: "TEST", theme: .blueSecondary)
+            SubHeader(text: "TEST", theme: .yellow)
+            SubHeader(text: "TEST", theme: .green)
+            SubHeader(text: "TEST", theme: .lightGreen)
+            SubHeader(text: "TEST", theme: .purple)
+            
+            SubHeader(text: "TEST", subText: "sub text", theme: .primary)
+            SubHeader(text: "TEST", subText: "sub text", theme: .secondary)
+            SubHeader(text: "TEST", subText: "sub text", theme: .pink)
+            SubHeader(text: "TEST", subText: "sub text", theme: .blueSecondary)
+            SubHeader(text: "TEST", subText: "sub text", theme: .yellow)
+            SubHeader(text: "TEST", subText: "sub text", theme: .green)
+            SubHeader(text: "TEST", subText: "sub text", theme: .lightGreen)
+            SubHeader(text: "TEST", subText: "sub text", theme: .purple)
+            
+            
+            SubHeader(
+                text: "TEST",
+                subText: "sub text",
+                subtitle: "this is a subtitle",
+                description: "some text for description should wrap if its too long so that it fits under",
+                theme: .primary
+            )
+            
+            
+            SubHeader(
+                text: "banana",
+                subText: "100",
+                subtitle: "fruit",
+                description: "some text for description should wrap if its too long so that it fits under",
+                theme: .primary
+            )
+            
+            SubHeader(
+                text: "power",
+                subText: "100"
+            )
+            SubHeader(
+                text: "fly",
+                subText: "30"
+            )
+            
+            SubHeader(
+                text: "run",
+                subText: "100",
+                theme: .pink
+            )
+            
+            SubHeader(
+                text: "mood",
+                subText: "1/10",
+                theme: .pink
+            )
+            
+            // Custom colors examples
+            SubHeader(text: "TEST", subText: "sub text", theme: .pink)
+            
+            SubHeader(text: "TEST", subText: "sub text", theme: .pink)
+                .colors(textColor: .pinkAccent, subTextColor: .customTeal)
+            
+            SubHeader(text: "TEST", subText: "sub text", theme: .green)
+            
+            SubHeader(text: "TEST", subText: "sub text", theme: .green).colors(textColor: .green, subTextColor: .customTeal)
+            
+            SubHeader(text: "TEST", subText: "sub text", theme: .purple)
+            SubHeader(text: "TEST", subText: "sub text", theme: .purple).colors(textColor: .purpleAccent, subTextColor: .lightGreen)
+        }
     }
 }

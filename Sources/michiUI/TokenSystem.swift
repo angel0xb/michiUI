@@ -81,6 +81,7 @@ public enum ColorToken {
     case tealContainer
     case tealSecondary
     case warning
+    case yellowOrange
     case yellowOrangeSecondary
     case pink // Alias for pinkAccent
 }
@@ -483,6 +484,8 @@ extension Color {
             colorName = "tealSecondary"
         case .warning:
             colorName = "warning"
+        case .yellowOrange:
+            colorName = "yellowOrange"
         case .yellowOrangeSecondary:
             colorName = "yellowOrangeSecondary"
         case .pink:

@@ -16,6 +16,8 @@ public struct MichiButton: View {
         case blueSecondary
         case purple
         case yellowOrange
+        case green
+        case lightGreen
     }
     
     public enum Style {
@@ -58,6 +60,8 @@ public struct MichiButton: View {
         case .blueSecondary: .blueSecondary
         case .purple: .purpleAccent
         case .yellowOrange: .yellowOrangeSecondary
+        case .green: .green
+        case .lightGreen: .lightGreen
         }
     }
     
@@ -209,7 +213,7 @@ public struct MichiButton: View {
     private var textColor: Color {
         switch style {
         case .filled:
-            return theme == .yellowOrange ? .token(.black) : .white
+            return (theme == .yellowOrange || theme == .lightGreen) ? .token(.black) : .white
         case .plain, .bordered:
             return Color.token(themeColor)
         }
@@ -288,6 +292,8 @@ public extension MichiButton {
             MichiButton("Blue Secondary Filled", theme: .blueSecondary, style: .filled) {}
             MichiButton("Purple Filled", theme: .purple, style: .filled) {}
             MichiButton("Yellow Orange Filled", theme: .yellowOrange, style: .filled) {}
+            MichiButton("Green Filled", theme: .green, style: .filled) {}
+            MichiButton("Light Green Filled", theme: .lightGreen, style: .filled) {}
             
             // Plain style
             MichiButton("Primary Plain", theme: .primary, style: .plain) {}
@@ -296,6 +302,8 @@ public extension MichiButton {
             MichiButton("Blue Secondary Plain", theme: .blueSecondary, style: .plain) {}
             MichiButton("Purple Plain", theme: .purple, style: .plain) {}
             MichiButton("Yellow Orange Plain", theme: .yellowOrange, style: .plain) {}
+            MichiButton("Green Plain", theme: .green, style: .plain) {}
+            MichiButton("Light Green Plain", theme: .lightGreen, style: .plain) {}
             
             // Bordered style
             MichiButton("Primary Bordered", theme: .primary, style: .bordered) {}
@@ -304,6 +312,8 @@ public extension MichiButton {
             MichiButton("Blue Secondary Bordered", theme: .blueSecondary, style: .bordered) {}
             MichiButton("Purple Bordered", theme: .purple, style: .bordered) {}
             MichiButton("Yellow Orange Bordered", theme: .yellowOrange, style: .bordered) {}
+            MichiButton("Green Bordered", theme: .green, style: .bordered) {}
+            MichiButton("Light Green Bordered", theme: .lightGreen, style: .bordered) {}
         }
         .padding()
     }
