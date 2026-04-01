@@ -73,6 +73,7 @@ public enum ColorToken {
     case lightGreen
     case lightPinkAccent
     case lightTeal
+    case mexicanPink
     case orangeYellowSurface
     case peach
     case pinkAccent
@@ -468,6 +469,8 @@ extension Color {
             colorName = "lightPinkAccent"
         case .lightTeal:
             colorName = "lightTeal"
+        case .mexicanPink:
+            colorName = "mexicanPink"
         case .orangeYellowSurface:
             colorName = "orangeYellowSurface"
         case .peach:
