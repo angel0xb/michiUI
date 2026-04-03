@@ -250,6 +250,7 @@ private struct MichiChipCell: View {
                 Capsule()
                     .stroke(Color.token(accent), lineWidth: 2)
             )
+            .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text(accessibilityLabel.isEmpty ? "Chip" : accessibilityLabel))
