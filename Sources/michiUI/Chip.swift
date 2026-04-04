@@ -97,6 +97,19 @@ extension MichiChipVariant {
     }
 }
 
+// MARK: - Group alignment
+
+/// Horizontal placement of chips within ``MichiChipGroup`` when extra space is available.
+public enum MichiChipGroupAlignment: Sendable {
+    case leading
+    case trailing
+}
+
+private enum MichiChipGroupMetrics {
+    /// Chip row height when using `GeometryReader` around horizontal `ScrollView` (chip + padding).
+    static let horizontalScrollRowHeight: CGFloat = 52
+}
+
 // MARK: - Group
 
 /// Chip group laid out horizontally or vertically; at most one option is selected at a time.
@@ -106,6 +119,7 @@ public struct MichiChipGroup<ID: Hashable>: View {
     private let variant: MichiChipVariant
     private let axis: Axis
     private let scrolls: Bool
+    private let alignment: MichiChipGroupAlignment
 
     @State private var selectionFeedback = false
 
@@ -115,18 +129,21 @@ public struct MichiChipGroup<ID: Hashable>: View {
     ///   - variant: Color preset for border and selected fill (see `MichiChipVariant`).
     ///   - axis: `.horizontal` lays out chips in a row; `.vertical` stacks them.
     ///   - scrolls: When `true`, wraps the stack in a `ScrollView` along `axis` for overflow.
+    ///   - alignment: When the chip row is shorter than the available width, pins chips to the leading or trailing edge.
     public init(
         options: [MichiChipOption<ID>],
         selection: Binding<ID?>,
         variant: MichiChipVariant = .primary,
         axis: Axis = .horizontal,
-        scrolls: Bool = true
+        scrolls: Bool = true,
+        alignment: MichiChipGroupAlignment = .leading
     ) {
         self.options = options
         self._selection = selection
         self.variant = variant
         self.axis = axis
         self.scrolls = scrolls
+        self.alignment = alignment
     }
 
     /// Uses a specific `ColorToken` as the accent (same as `variant: .custom(token)`).
@@ -135,13 +152,15 @@ public struct MichiChipGroup<ID: Hashable>: View {
         selection: Binding<ID?>,
         accent: ColorToken,
         axis: Axis = .horizontal,
-        scrolls: Bool = true
+        scrolls: Bool = true,
+        alignment: MichiChipGroupAlignment = .leading
     ) {
         self.options = options
         self._selection = selection
         self.variant = .custom(accent)
         self.axis = axis
         self.scrolls = scrolls
+        self.alignment = alignment
     }
 
     public var body: some View {
@@ -149,9 +168,18 @@ public struct MichiChipGroup<ID: Hashable>: View {
             if scrolls {
                 switch axis {
                 case .horizontal:
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        chipStack
+                    GeometryReader { geo in
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                chips
+                            }
+                            .frame(
+                                minWidth: geo.size.width,
+                                alignment: horizontalContentAlignment
+                            )
+                        }
                     }
+                    .frame(height: MichiChipGroupMetrics.horizontalScrollRowHeight)
                 case .vertical:
                     ScrollView(.vertical, showsIndicators: false) {
                         chipStack
@@ -164,6 +192,13 @@ public struct MichiChipGroup<ID: Hashable>: View {
         .sensoryFeedback(.selection, trigger: selectionFeedback)
     }
 
+    private var horizontalContentAlignment: Alignment {
+        switch alignment {
+        case .leading: .leading
+        case .trailing: .trailing
+        }
+    }
+
     @ViewBuilder
     private var chipStack: some View {
         switch axis {
@@ -171,10 +206,26 @@ public struct MichiChipGroup<ID: Hashable>: View {
             HStack(spacing: 8) {
                 chips
             }
+            .frame(maxWidth: .infinity, alignment: horizontalContentAlignment)
         case .vertical:
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: verticalStackAlignment, spacing: 8) {
                 chips
             }
+            .frame(maxWidth: .infinity, alignment: verticalGroupFrameAlignment)
+        }
+    }
+
+    private var verticalStackAlignment: HorizontalAlignment {
+        switch alignment {
+        case .leading: .leading
+        case .trailing: .trailing
+        }
+    }
+
+    private var verticalGroupFrameAlignment: Alignment {
+        switch alignment {
+        case .leading: .leading
+        case .trailing: .trailing
         }
     }
 
