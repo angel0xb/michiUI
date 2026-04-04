@@ -10,6 +10,7 @@ import SwiftUI
 public enum CardVariant {
     case pink
     case yellow
+    case blue
 }
 
 public enum CardImage {
@@ -110,26 +111,27 @@ public struct Card: View {
         switch variant {
         case .pink: Color.token(.pink)
         case .yellow:  Color.token(.orangeYellowSurface)
+        case .blue: Color.token(.customBlue)
         }
     }
     
     var titleBarColor: Color {
         switch variant {
         case .pink: Color.token(.tealSecondary)
-        case .yellow: Color.token(.pinkAccent)
+        case .yellow, .blue: Color.token(.pinkAccent)
         }
     }
     
     var subtitleBarColor: Color {
         switch variant {
-        case .pink:  Color.token(.orangeYellowSurface)
+        case .pink, .blue:  Color.token(.orangeYellowSurface)
         case .yellow: Color.token(.customOrange)
         }
     }
     
     var titleTextColor: Color {
         switch variant {
-        case .pink: .white
+        case .pink, .blue: .white
         case .yellow: Color.token(.black)
         }
     }
@@ -138,6 +140,7 @@ public struct Card: View {
         switch variant {
         case .pink: .white
         case .yellow: Color.token(.customTeal)
+        case .blue: Color.token(.black)
         }
     }
     
@@ -217,6 +220,14 @@ public struct Card: View {
                 image: Image(systemName: "photo.artframe"),
                 bulletedList: ["first bullet", "second bullet", "third bullet", "fourth bullet", "fifth bullet"],
                 variant: .yellow
+            )
+            
+            Card(
+                title: "Title",
+                subtitle: "subTitle",
+                image: Image(systemName: "photo.artframe"),
+                bulletedList: ["first bullet", "second bullet", "third bullet", "fourth bullet", "fifth bullet"],
+                variant: .blue
             )
             
             // Using CardImage enum directly

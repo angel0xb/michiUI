@@ -13,7 +13,7 @@ import SwiftUI
 public enum MichiChipContent: Equatable {
     case text(String)
     case image(Image)
-    case imageAndText(image: Image, text: String)
+    case imageAndText(image: Image?, text: String)
 }
 
 // MARK: - Option
@@ -49,7 +49,7 @@ public struct MichiChipOption<ID: Hashable>: Identifiable {
     ///   - image: Leading image.
     ///   - text: Visible title.
     ///   - accessibilityLabel: Overrides VoiceOver when non-nil (defaults to `text`).
-    public init(id: ID, image: Image, text: String, accessibilityLabel: String? = nil) {
+    public init(id: ID, image: Image?, text: String, accessibilityLabel: String? = nil) {
         self.id = id
         self.content = .imageAndText(image: image, text: text)
         self.accessibilityLabel = accessibilityLabel
@@ -187,11 +187,12 @@ public struct MichiChipGroup<ID: Hashable>: View {
                 accent: variant.accentToken,
                 unselectedForeground: Color.token(variant.accentToken),
                 selectedForeground: variant.selectedForeground,
-                accessibilityLabel: resolvedAccessibilityLabel(for: option)
-            ) {
+                accessibilityLabel: resolvedAccessibilityLabel(for: option),
+                imageSide: 30,
+                action: {
                 selection = option.id
                 selectionFeedback.toggle()
-            }
+            })
         }
     }
 
@@ -215,9 +216,8 @@ private struct MichiChipCell: View {
     let unselectedForeground: Color
     let selectedForeground: Color
     let accessibilityLabel: String
+    let imageSide: CGFloat
     let action: () -> Void
-
-    private static let imageSide: CGFloat = 20
 
     var body: some View {
         Button(action: action) {
@@ -229,16 +229,18 @@ private struct MichiChipCell: View {
                     image
                         .resizable()
                         .scaledToFit()
-                        .frame(width: Self.imageSide, height: Self.imageSide)
+                        .frame(width: imageSide, height: imageSide)
                 case .imageAndText(let image, let title):
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: Self.imageSide, height: Self.imageSide)
+                    if let image {
+                        image
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: imageSide, height: imageSide)
+                    }
                     Text(title)
                 }
             }
-            .font(.token(.labelMedium))
+            .font(.token(.titleSmall))
             .foregroundStyle(isSelected ? selectedForeground : unselectedForeground)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
