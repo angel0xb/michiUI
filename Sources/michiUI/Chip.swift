@@ -136,7 +136,7 @@ public struct MichiChipGroup<ID: Hashable>: View {
         variant: MichiChipVariant = .primary,
         axis: Axis = .horizontal,
         scrolls: Bool = true,
-        alignment: MichiChipGroupAlignment = .leading
+        alignment: MichiChipGroupAlignment = .trailing
     ) {
         self.options = options
         self._selection = selection
@@ -153,7 +153,7 @@ public struct MichiChipGroup<ID: Hashable>: View {
         accent: ColorToken,
         axis: Axis = .horizontal,
         scrolls: Bool = true,
-        alignment: MichiChipGroupAlignment = .leading
+        alignment: MichiChipGroupAlignment = .trailing
     ) {
         self.options = options
         self._selection = selection
